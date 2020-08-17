@@ -219,6 +219,20 @@ class V2Agent {
   }
 
   /**
+   * Add v2 response to Dialogflow fulfillment webhook request based on developer
+   * defined response messages and original request source
+   *
+   * @param {string} requestSource string indicating the source of the initial request
+   * @private
+   */
+  addSessionEntityType_(requestSource) {
+    if(this.agent.sessionEntityTypes_.length > 0) {
+        this.addJson_({ sessionEntityTypes: this.agent.sessionEntityTypes_ });
+    }
+  }
+
+
+  /**
    * Add v2 response to Dialogflow fulfillment webhook request
    *
    * @param {Object} responseJson JSON to send to Dialogflow

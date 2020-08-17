@@ -84,6 +84,15 @@ class WebhookClient {
     }
 
     /**
+     * List of session entity types defined by the developer
+     *
+     * @private
+     * @type {SessionEntity[]}
+     */
+
+    this.sessionEntityTypes_ = [];
+
+    /**
      * List of response messages defined by the developer
      *
      * @private
@@ -236,6 +245,15 @@ class WebhookClient {
   // ---------------------------------------------------------------------------
   //                   Generic Methods
   // ---------------------------------------------------------------------------
+
+
+  addSessionEntityType(name, entities) {
+    this.sessionEntityTypes_.push({
+        name: `${this.session}/entityTypes/${name}`,
+        entities,
+        entityOverrideMode: 'ENTITY_OVERRIDE_MODE_OVERRIDE'
+    });
+  }
 
   /**
    * Add a response or list of responses to be sent to Dialogflow
@@ -477,6 +495,7 @@ class WebhookClient {
   send_() {
     const requestSource = this.requestSource;
     const messages = this.responseMessages_;
+    const entityTypes = this.sessionEntityTypes_;
 
     // If AoG response and the first response isn't a text response,
     // add a empty text response as the first item
@@ -499,7 +518,11 @@ class WebhookClient {
       || SUPPORTED_PLATFORMS.indexOf(this.requestSource) < 0) {
       this.client.addMessagesResponse_(requestSource);
     }
-    if (payload && !payload.sendAsMessage) {
+    if (entityTypes.length > 0) {
+        this.client.addSessionEntityType_(entityTypes, requestSource);
+    }
+
+    if (payload && !payload.sendAsMessage)
       this.client.addPayloadResponse_(payload, requestSource);
     }
     this.client.sendResponses_(requestSource);
