@@ -511,6 +511,7 @@ class WebhookClient {
     // if platform may support messages, send messages
     // if there is a payload, send the payload for the repsonse
     const payload = this.existingPayload_(requestSource);
+
     if (messages.length === 1 &&
       messages[0] instanceof Text) {
       this.client.addTextResponse_();
@@ -518,13 +519,15 @@ class WebhookClient {
       || SUPPORTED_PLATFORMS.indexOf(this.requestSource) < 0) {
       this.client.addMessagesResponse_(requestSource);
     }
+
     if (entityTypes.length > 0) {
         this.client.addSessionEntityType_(entityTypes, requestSource);
     }
 
-    if (payload && !payload.sendAsMessage)
+    if (payload && !payload.sendAsMessage) {
       this.client.addPayloadResponse_(payload, requestSource);
     }
+
     this.client.sendResponses_(requestSource);
   }
 
